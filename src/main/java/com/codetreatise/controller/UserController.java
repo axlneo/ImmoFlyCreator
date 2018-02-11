@@ -7,6 +7,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -15,10 +16,14 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.codetreatise.service.PrintReport;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.*;
 import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
+import net.sf.jasperreports.engine.JRException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -43,6 +48,7 @@ import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 
 /**
  * @author Ram Alapure
@@ -138,6 +144,9 @@ public class UserController implements Initializable{
 	
 	@FXML
     private MenuItem deleteUsers;
+
+	@FXML
+	private Button printButton;
 	
 	@Lazy
     @Autowired
@@ -148,7 +157,10 @@ public class UserController implements Initializable{
 	
 	private ObservableList<User> userList = FXCollections.observableArrayList();
 	private ObservableList<String> roles = FXCollections.observableArrayList("Admin", "User");
-	
+
+	private BooleanProperty isUserSelected = new SimpleBooleanProperty(false);
+	private User selectedUser;
+
 	@FXML
 	private void exit(ActionEvent event) {
 		Platform.exit();
@@ -408,6 +420,9 @@ public class UserController implements Initializable{
 		file2 = null;
 		file3 = null;
 		file4 = null;
+
+		isUserSelected.set(false);
+		selectedUser = null;
 	}
 	
 	private void saveAlert(User user){
@@ -463,6 +478,8 @@ public class UserController implements Initializable{
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+
+    	initPrintButton();
 		
 		cbRole.setItems(roles);
 		
@@ -474,8 +491,44 @@ public class UserController implements Initializable{
 		loadUserDetails();
 	}
 	
-	
-	
+	private void initPrintButton(){
+
+		Image image = new Image(getClass().getResourceAsStream("/images/pdf-icon.png"));
+		ImageView imageView = new ImageView(image);
+		imageView.setFitHeight(100.0);
+		imageView.setFitWidth(100.0);
+		printButton.setGraphic(imageView);
+
+		printButton.visibleProperty().bind(isUserSelected);
+
+		printButton.setOnAction(e -> {
+
+				// --- Show Jasper Report on click-----
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						System.out.println("now open dialog!");
+						try {
+							PrintReport viewReport = new PrintReport();
+							viewReport.showReport(selectedUser);
+						} catch (JRException e1) {
+							e1.printStackTrace();
+						} catch (ClassNotFoundException e1) {
+							e1.printStackTrace();
+						} catch (SQLException e1) {
+							e1.printStackTrace();
+						}
+					}
+				});
+
+
+		});
+	}
+
+	@FXML protected void printPdf(ActionEvent event) {
+
+	}
+
 	/*
 	 *  Set All userTable column properties
 	 */
@@ -563,14 +616,12 @@ public class UserController implements Initializable{
 					cbRole.getSelectionModel().select(user.getRole());
 
 					imageView1.setImage(convertToJavaFXImage(user.getImage1(),200,150));
-
 					imageView2.setImage(convertToJavaFXImage(user.getImage2(),200,150));
-
 					imageView3.setImage(convertToJavaFXImage(user.getImage3(),200,150));
-
 					imageView4.setImage(convertToJavaFXImage(user.getImage4(),200,150));
 
-
+					isUserSelected.set(true);
+					selectedUser = user;
 				}
 			};
 			return cell;
