@@ -2,12 +2,7 @@ package com.codetreatise.bean;
 
 import java.time.LocalDate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * @author Ram Alapure
@@ -37,7 +32,46 @@ public class User {
 	
 	private String password;
 
-	
+	private byte[] image1;
+
+	private byte[] image2;
+
+	private byte[] image3;
+
+	private byte[] image4;
+
+	public byte[] getImage1() {
+		return image1;
+	}
+
+	public void setImage1(byte[] image1) {
+		this.image1 = image1;
+	}
+
+	public byte[] getImage2() {
+		return image2;
+	}
+
+	public void setImage2(byte[] image2) {
+		this.image2 = image2;
+	}
+
+	public byte[] getImage3() {
+		return image3;
+	}
+
+	public void setImage3(byte[] image3) {
+		this.image3 = image3;
+	}
+
+	public byte[] getImage4() {
+		return image4;
+	}
+
+	public void setImage4(byte[] image4) {
+		this.image4 = image4;
+	}
+
 	public long getId() {
 		return id;
 	}

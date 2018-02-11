@@ -1,14 +1,25 @@
 package com.codetreatise.controller;
 
-import java.io.IOException;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.control.*;
+import javafx.scene.image.WritableImage;
+import javafx.stage.FileChooser;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
@@ -25,26 +36,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
+
+import javax.imageio.ImageIO;
+
 /**
  * @author Ram Alapure
  * @since 05-04-2017
@@ -91,7 +90,25 @@ public class UserController implements Initializable{
 	
 	@FXML
     private Button saveUser;
-	
+
+	@FXML
+	private FileChooser fileChooser;
+
+    @FXML
+    private ImageView imageView1;
+
+	@FXML
+	private ImageView imageView2;
+
+	@FXML
+	private ImageView imageView3;
+
+	@FXML
+	private ImageView imageView4;
+
+
+	private File file1, file2, file3, file4 = null;
+
 	@FXML
 	private TableView<User> userTable;
 
@@ -149,7 +166,97 @@ public class UserController implements Initializable{
     void reset(ActionEvent event) {
     	clearFields();
     }
-    
+
+
+
+	@FXML
+	private void chooseFile(ActionEvent event) {
+		FileChooser fc = new FileChooser();
+		fc.setTitle("Get Text");
+		fc.getExtensionFilters().addAll(
+				new FileChooser.ExtensionFilter("Images files(*.jpg,*.png)","*.jpg", "*.png"),
+				new FileChooser.ExtensionFilter("All Files", "*.*"));
+		List<File> phil = stageManager.openChooseDialog(fc); //TODO verify
+		if(null != phil){ //not cancel
+
+			switch(phil.size()){
+				case 0: //TODO display error
+					break;
+
+				case 1 : file1 = phil.get(0);
+					if(null != file1){
+						Image image1 = new Image(file1.toURI().toString());
+
+						imageView1.setImage(image1);
+
+					};
+					break;
+
+				case 2 : file1 = phil.get(0);
+					file2 = phil.get(1);
+					if(null != file1){
+						Image image1 = new Image(file1.toURI().toString());
+
+						imageView1.setImage(image1);
+					};
+					if(null != file2){
+						Image image2 = new Image(file2.toURI().toString());
+
+						imageView2.setImage(image2);
+                    };
+					break;
+
+				case 3 : file1 = phil.get(0);
+					file2 = phil.get(1);
+					file3 = phil.get(2);
+					if(null != file1){
+						Image image1 = new Image(file1.toURI().toString());
+
+						imageView1.setImage(image1);
+					};
+					if(null != file2){
+						Image image2 = new Image(file2.toURI().toString());
+
+						imageView2.setImage(image2);
+					};
+					if(null != file3){
+						Image image3 = new Image(file3.toURI().toString());
+
+						imageView3.setImage(image3);
+					};
+					break;
+
+				case 4 : file1 = phil.get(0);
+					file2 = phil.get(1);
+					file3 = phil.get(2);
+					file4 = phil.get(3);
+					if(null != file1){
+						Image image1 = new Image(file1.toURI().toString());
+
+						imageView1.setImage(image1);
+					};
+					if(null != file2){
+						Image image2 = new Image(file2.toURI().toString());
+
+						imageView2.setImage(image2);
+					};
+					if(null != file3){
+						Image image3 = new Image(file3.toURI().toString());
+
+						imageView3.setImage(image3);
+					};
+					if(null != file4){
+						Image image4 = new Image(file4.toURI().toString());
+
+						imageView4.setImage(image4);
+					};
+					break;
+			}
+		}
+
+
+	}
+
     @FXML
     private void saveUser(ActionEvent event){
     	
@@ -170,7 +277,9 @@ public class UserController implements Initializable{
         			user.setRole(getRole());
         			user.setEmail(getEmail());
         			user.setPassword(getPassword());
-        			
+
+        			saveUserImages(user);
+
         			User newUser = userService.save(user);
         			
         			saveAlert(newUser);
@@ -183,6 +292,9 @@ public class UserController implements Initializable{
     			user.setDob(getDob());
     			user.setGender(getGender());
     			user.setRole(getRole());
+
+				saveUserImages(user);
+
     			User updatedUser =  userService.update(user);
     			updateAlert(updatedUser);
     		}
@@ -193,7 +305,76 @@ public class UserController implements Initializable{
     	
     	
     }
-    
+
+    private void saveUserImages(User user){
+
+    	if(null != file1){
+
+			byte[] bFile1 = new byte[(int) file1.length()];
+
+			try {
+				FileInputStream fileInputStream = new FileInputStream(file1);
+				fileInputStream.read(bFile1);
+				fileInputStream.close();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			user.setImage1(bFile1);
+
+		}
+		if(null != file2){
+
+			byte[] bFile2 = new byte[(int) file2.length()];
+
+			try {
+				FileInputStream fileInputStream = new FileInputStream(file2);
+				fileInputStream.read(bFile2);
+				fileInputStream.close();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			user.setImage2(bFile2);
+
+		}
+		if(null != file3){
+
+			byte[] bFile3 = new byte[(int) file3.length()];
+
+			try {
+				FileInputStream fileInputStream = new FileInputStream(file3);
+				fileInputStream.read(bFile3);
+				fileInputStream.close();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			user.setImage3(bFile3);
+
+		}
+		if(null != file4){
+
+			byte[] bFile4 = new byte[(int) file4.length()];
+
+			try {
+				FileInputStream fileInputStream = new FileInputStream(file4);
+				fileInputStream.read(bFile4);
+				fileInputStream.close();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			user.setImage4(bFile4);
+
+		}
+
+	}
+
     @FXML
     private void deleteUsers(ActionEvent event){
     	List<User> users = userTable.getSelectionModel().getSelectedItems();
@@ -219,6 +400,14 @@ public class UserController implements Initializable{
 		cbRole.getSelectionModel().clearSelection();
 		email.clear();
 		password.clear();
+		imageView1.setImage(null);
+		imageView2.setImage(null);
+		imageView3.setImage(null);
+		imageView4.setImage(null);
+		file1 = null;
+		file2 = null;
+		file3 = null;
+		file4 = null;
 	}
 	
 	private void saveAlert(User user){
@@ -324,7 +513,7 @@ public class UserController implements Initializable{
 		colEdit.setCellFactory(cellFactory);
 	}
 	
-	Callback<TableColumn<User, Boolean>, TableCell<User, Boolean>> cellFactory = 
+	Callback<TableColumn<User, Boolean>, TableCell<User, Boolean>> cellFactory =
 			new Callback<TableColumn<User, Boolean>, TableCell<User, Boolean>>()
 	{
 		@Override
@@ -334,7 +523,7 @@ public class UserController implements Initializable{
 			{
 				Image imgEdit = new Image(getClass().getResourceAsStream("/images/edit.png"));
 				final Button btnEdit = new Button();
-				
+
 				@Override
 				public void updateItem(Boolean check, boolean empty)
 				{
@@ -349,7 +538,7 @@ public class UserController implements Initializable{
 							User user = getTableView().getItems().get(getIndex());
 							updateUser(user);
 						});
-						
+
 						btnEdit.setStyle("-fx-background-color: transparent;");
 						ImageView iv = new ImageView();
 				        iv.setImage(imgEdit);
@@ -357,7 +546,7 @@ public class UserController implements Initializable{
 				        iv.setSmooth(true);
 				        iv.setCache(true);
 						btnEdit.setGraphic(iv);
-						
+
 						setGraphic(btnEdit);
 						setAlignment(Pos.CENTER);
 						setText(null);
@@ -372,14 +561,61 @@ public class UserController implements Initializable{
 					if(user.getGender().equals("Male")) rbMale.setSelected(true);
 					else rbFemale.setSelected(true);
 					cbRole.getSelectionModel().select(user.getRole());
+
+
+						imageView1.setImage(convertToJavaFXImage(user.getImage1(),200,150));
+
+
+
+
+						imageView2.setImage(convertToJavaFXImage(user.getImage2(),200,150));
+
+
+
+						imageView3.setImage(convertToJavaFXImage(user.getImage3(),200,150));
+
+
+
+						imageView4.setImage(convertToJavaFXImage(user.getImage4(),200,150));
+
+
+					/*if(null != user.getImage4()){
+						try {
+							FileOutputStream os = new FileOutputStream("image4.png");
+							os.write(user.getImage4());
+							os.close();
+						} catch (FileNotFoundException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+
+						imageView4 = new ImageView("file://image4.png");
+					}*/
 				}
 			};
 			return cell;
 		}
 	};
 
-	
-	
+	private static Image convertToJavaFXImage(byte[] raw, final int width, final int height) {
+		if(null != raw){
+
+			WritableImage image = new WritableImage(width, height);
+			try {
+				ByteArrayInputStream bis = new ByteArrayInputStream(raw);
+				BufferedImage read = ImageIO.read(bis);
+				image = SwingFXUtils.toFXImage(read, null);
+			} catch (IOException ex) {
+				//Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+				ex.printStackTrace();
+			}
+			return image;
+		} else {
+			return null;
+		}
+	}
+
 	/*
 	 *  Add All users to observable list and update table
 	 */

@@ -2,8 +2,11 @@ package com.codetreatise.config;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+import java.io.File;
+import java.util.List;
 import java.util.Objects;
 
+import javafx.stage.FileChooser;
 import org.slf4j.Logger;
 
 import com.codetreatise.view.FxmlView;
@@ -27,6 +30,9 @@ public class StageManager {
         this.primaryStage = stage;
     }
 
+    public List<File> openChooseDialog(FileChooser fc){
+        return fc.showOpenMultipleDialog(primaryStage);
+    }
     public void switchScene(final FxmlView view) {
         Parent viewRootNodeHierarchy = loadViewNodeHierarchy(view.getFxmlFile());
         show(viewRootNodeHierarchy, view.getTitle());

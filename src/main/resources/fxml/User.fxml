@@ -16,12 +16,13 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="600.0" prefWidth="1000.0" stylesheets="@../styles/Styles.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.codetreatise.controller.UserController">
+<BorderPane prefHeight="600.0" prefWidth="1000.0" stylesheets="@../styles/Styles.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.codetreatise.controller.UserController">
    <top>
       <MenuBar BorderPane.alignment="TOP_LEFT">
         <menus>
@@ -115,7 +116,12 @@
                   <Insets left="25.0" right="25.0" />
                </VBox.margin>
             </PasswordField>
-            <HBox prefHeight="30.0" prefWidth="250.0" spacing="10.0">
+             <Button fx:id="choosefile" mnemonicParsing="false" onAction="#chooseFile" prefHeight="30.0" prefWidth="129.0" style="-fx-background-color: white;" text="Choose image">
+                 <effect>
+                     <DropShadow blurType="ONE_PASS_BOX" color="#1965d0" />
+                 </effect>
+             </Button>
+            <HBox prefHeight="25.0" prefWidth="275.0" spacing="10.0">
                <children>
                   <Button fx:id="reset" mnemonicParsing="false" onAction="#reset" prefHeight="30.0" prefWidth="75.0" style="-fx-background-color: white;" text="Reset">
                      <effect>
@@ -190,6 +196,16 @@
                   </ContextMenu>
                </contextMenu>
             </TableView>
+
+                              <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <ImageView fx:id="imageView1" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="imageView2" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="imageView3" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="imageView4" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+               </children>
+
+                              </HBox>
          </children>
       </VBox>
    </center>
