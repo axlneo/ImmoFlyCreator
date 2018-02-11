@@ -562,36 +562,15 @@ public class UserController implements Initializable{
 					else rbFemale.setSelected(true);
 					cbRole.getSelectionModel().select(user.getRole());
 
+					imageView1.setImage(convertToJavaFXImage(user.getImage1(),200,150));
 
-						imageView1.setImage(convertToJavaFXImage(user.getImage1(),200,150));
+					imageView2.setImage(convertToJavaFXImage(user.getImage2(),200,150));
 
+					imageView3.setImage(convertToJavaFXImage(user.getImage3(),200,150));
 
-
-
-						imageView2.setImage(convertToJavaFXImage(user.getImage2(),200,150));
-
-
-
-						imageView3.setImage(convertToJavaFXImage(user.getImage3(),200,150));
+					imageView4.setImage(convertToJavaFXImage(user.getImage4(),200,150));
 
 
-
-						imageView4.setImage(convertToJavaFXImage(user.getImage4(),200,150));
-
-
-					/*if(null != user.getImage4()){
-						try {
-							FileOutputStream os = new FileOutputStream("image4.png");
-							os.write(user.getImage4());
-							os.close();
-						} catch (FileNotFoundException e) {
-							e.printStackTrace();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-
-						imageView4 = new ImageView("file://image4.png");
-					}*/
 				}
 			};
 			return cell;
