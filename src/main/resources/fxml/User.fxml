@@ -22,13 +22,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="600.0" prefWidth="1000.0" stylesheets="@../styles/Styles.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.codetreatise.controller.AgentController">
+<BorderPane prefHeight="768.0" prefWidth="1024.0" stylesheets="@../styles/Styles.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.codetreatise.controller.AgentController">
    <top>
       <MenuBar BorderPane.alignment="TOP_LEFT">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#exit" text="Exit" />
+                <MenuItem mnemonicParsing="false" onAction="#toAnnonceView" text="Annonces" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
@@ -116,7 +117,23 @@
                   <Insets left="25.0" right="25.0" />
                </VBox.margin>
             </PasswordField>
-             <Button fx:id="choosefile" mnemonicParsing="false" onAction="#chooseFile" prefHeight="30.0" prefWidth="129.0" style="-fx-background-color: white;" text="Download Logo">
+            <VBox alignment="CENTER" prefHeight="61.0" prefWidth="193.0" spacing="10.0">
+               <children>
+                  <Label text="Coordonnees signature" textAlignment="CENTER" textFill="WHITE" wrapText="true" />
+                  <TextField fx:id="coordName" layoutX="15.0" layoutY="15.0" prefHeight="24.0" prefWidth="246.0" promptText="Nom de l'adresse" />
+                  <TextField fx:id="coordNumRue" prefHeight="24.0" prefWidth="209.0" promptText="numero de rue" />
+                  <TextField fx:id="coordRue" layoutX="10.0" layoutY="29.0" prefHeight="26.0" prefWidth="56.0" promptText="nom de rue" />
+                  <TextField fx:id="coordCodePostal" layoutX="10.0" layoutY="37.0" prefHeight="26.0" prefWidth="245.0" promptText="code postal" />
+                  <TextField fx:id="coordVille" layoutX="10.0" layoutY="62.0" prefHeight="26.0" prefWidth="56.0" promptText="ville" />
+                  <TextField fx:id="coordUrl" layoutX="15.0" layoutY="15.0" prefHeight="24.0" prefWidth="209.0" promptText="adresse du site web" />
+                  <TextField fx:id="coordPhone" layoutX="15.0" layoutY="195.0" prefHeight="24.0" prefWidth="209.0" promptText="numéro de téléphone" />
+                  <TextField fx:id="coordEmail" layoutX="15.0" layoutY="231.0" prefHeight="24.0" prefWidth="209.0" promptText="email de contact annonce" />
+               </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </VBox>
+             <Button fx:id="choosefile" mnemonicParsing="false" onAction="#chooseFile" prefHeight="30.0" prefWidth="129.0" style="-fx-background-color: white;" text="Upload Logo">
                  <effect>
                      <DropShadow blurType="ONE_PASS_BOX" color="#1965d0" />
                  </effect>

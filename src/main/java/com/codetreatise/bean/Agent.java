@@ -1,6 +1,8 @@
 package com.codetreatise.bean;
 
 
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
@@ -11,8 +13,8 @@ import java.util.Set;
 public class Agent {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name = "agent_id", updatable = false, nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="agent_id")
     private long agentId;
 
     private String firstName;
@@ -32,7 +34,8 @@ public class Agent {
     @Column(name = "logo")
     private byte[] logo;
 
-    @OneToOne(fetch = FetchType.EAGER, mappedBy = "agent", cascade = CascadeType.ALL) //TODO essayer de passer en lazy
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="coord_id")
     private Coordonnees coordonnees;
 
     @OneToMany(fetch = FetchType.EAGER,mappedBy="agent")//TODO essayer de passer en lazy

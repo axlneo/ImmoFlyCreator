@@ -13,6 +13,8 @@ import java.util.regex.Pattern;
 
 import com.codetreatise.bean.Agent;
 import com.codetreatise.bean.Annonce;
+import com.codetreatise.bean.Coordonnees;
+import com.codetreatise.repository.CoordonneesRepository;
 import com.codetreatise.service.AgentService;
 import com.codetreatise.service.PrintReport;
 import com.codetreatise.utils.ImageUtils;
@@ -135,12 +137,40 @@ public class AgentController implements Initializable{
     @FXML
     private Button printButton;
 
+    @FXML
+    private TextField coordName;
+
+    @FXML
+    private TextField coordNumRue;
+
+    @FXML
+    private TextField coordRue;
+
+    @FXML
+    private TextField coordCodePostal;
+
+    @FXML
+    private TextField coordVille;
+
+    @FXML
+    private TextField coordUrl;
+
+    @FXML
+    private TextField coordPhone;
+
+    @FXML
+    private TextField coordEmail;
+
+
     @Lazy
     @Autowired
     private StageManager stageManager;
 
     @Autowired
     private AgentService agentService;
+
+    @Autowired
+    private CoordonneesRepository coordService;
 
     private ObservableList<Agent> agentList = FXCollections.observableArrayList();
     private ObservableList<String> roles = FXCollections.observableArrayList("Admin", "User");
@@ -208,6 +238,21 @@ public class AgentController implements Initializable{
                     user.setEmail(getEmail());
                     user.setPassword(getPassword());
 
+                    Coordonnees coord = new Coordonnees();
+
+                    coord.setCodePostal(getCoordCodePostal());
+                    coord.setEmail(getCoordEmail());
+                    coord.setNom(getCoordName());
+                    coord.setNomRue(getCoordNumRue());
+                    coord.setPhone(getCoordPhone());
+                    coord.setRue(getCoordRue());
+                    coord.setUrl(getCoordUrl());
+                    coord.setVille(getCoordVille());
+
+
+                    user.setCoordonnees(coord);
+
+
                     saveUserImages(user);
 
                     Agent newUser = agentService.save(user);
@@ -222,6 +267,20 @@ public class AgentController implements Initializable{
                 user.setDob(getDob());
                 user.setGender(getGender());
                 user.setRole(getRole());
+
+                Coordonnees coord = new Coordonnees();
+
+                coord.setCodePostal(getCoordCodePostal());
+                coord.setEmail(getCoordEmail());
+                coord.setNom(getCoordName());
+                coord.setNomRue(getCoordNumRue());
+                coord.setPhone(getCoordPhone());
+                coord.setRue(getCoordRue());
+                coord.setUrl(getCoordUrl());
+                coord.setVille(getCoordVille());
+
+                user.setCoordonnees(coord);
+
 
                 saveUserImages(user);
 
@@ -285,6 +344,15 @@ public class AgentController implements Initializable{
         imageLogo.setImage(null);
         logoFile = null;
 
+        coordCodePostal.clear();
+        coordEmail.clear();
+        coordName.clear();
+        coordNumRue.clear();
+        coordPhone.clear();
+        coordRue.clear();
+        coordUrl.clear();
+        coordVille.clear();
+
         isUserSelected.set(false);
 		selectedAgent = null;
     }
@@ -341,6 +409,37 @@ public class AgentController implements Initializable{
         return password.getText();
     }
 
+    public String getCoordName() {
+        return coordName.getText();
+    }
+
+    public String getCoordNumRue() {
+        return coordNumRue.getText();
+    }
+
+    public String getCoordRue() {
+        return coordRue.getText();
+    }
+
+    public String getCoordCodePostal() {
+        return coordCodePostal.getText();
+    }
+
+    public String getCoordVille() {
+        return coordVille.getText();
+    }
+
+    public String getCoordUrl() {
+        return coordUrl.getText();
+    }
+
+    public String getCoordPhone() {
+        return coordPhone.getText();
+    }
+
+    public String getCoordEmail() {
+        return coordEmail.getText();
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -476,6 +575,18 @@ public class AgentController implements Initializable{
                             cbRole.getSelectionModel().select(user.getRole());
                             email.setText(user.getEmail());
 
+                            if(null != user.getCoordonnees()){
+                                coordCodePostal.setText(user.getCoordonnees().getCodePostal());
+                                coordEmail.setText(user.getCoordonnees().getEmail());
+                                coordName.setText(user.getCoordonnees().getNom());
+                                coordNumRue.setText(user.getCoordonnees().getNomRue());
+                                coordPhone.setText(user.getCoordonnees().getPhone());
+                                coordRue.setText(user.getCoordonnees().getRue());
+                                coordUrl.setText(user.getCoordonnees().getUrl());
+                                coordVille.setText(user.getCoordonnees().getVille());
+                            }
+
+
 					        imageLogo.setImage(ImageUtils.convertToJavaFXImage(user.getLogo(),200,150));
 
                             isUserSelected.set(true);
@@ -535,5 +646,9 @@ public class AgentController implements Initializable{
             else alert.setContentText("Please Enter Valid "+ field);
         }
         alert.showAndWait();
+    }
+    @FXML
+    private void toAnnonceView(ActionEvent event) {
+        stageManager.switchScene(FxmlView.ANNONCE);
     }
 }

@@ -1,5 +1,7 @@
 package com.codetreatise.bean;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 @Entity
@@ -7,9 +9,9 @@ import javax.persistence.*;
 public class Coordonnees {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name = "coord_id", updatable = false, nullable = false)
-    private long coord_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "coord_id")
+    private long coordId;
 
     @Column(name = "nom")
     private String nom;
@@ -35,16 +37,13 @@ public class Coordonnees {
     @Column(name = "url")
     private String url;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @PrimaryKeyJoinColumn
-    private Agent agent;
 
-    public long getCoord_id() {
-        return coord_id;
+    public long getCoordId() {
+        return coordId;
     }
 
-    public void setCoord_id(long coord_id) {
-        this.coord_id = coord_id;
+    public void setCoordId(long coordId) {
+        this.coordId = coordId;
     }
 
     public String getNom() {
@@ -111,11 +110,5 @@ public class Coordonnees {
         this.url = url;
     }
 
-    public Agent getAgent() {
-        return agent;
-    }
 
-    public void setAgent(Agent agent) {
-        this.agent = agent;
-    }
 }
