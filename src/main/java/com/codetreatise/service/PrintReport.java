@@ -1,5 +1,7 @@
 package com.codetreatise.service;
 
+import com.codetreatise.bean.Agent;
+import com.codetreatise.bean.Annonce;
 import com.codetreatise.bean.User;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -20,7 +22,7 @@ public class PrintReport {
      */
     private static final long serialVersionUID = 1L;
 
-    public void showReport(User user) throws JRException, ClassNotFoundException, SQLException {
+    public void showReport(Annonce annonce) throws JRException, ClassNotFoundException, SQLException {
 
         InputStream reportSrcFile = getClass().getResourceAsStream("/jasper/immo_fly.jrxml");
 
@@ -29,7 +31,7 @@ public class PrintReport {
         // Fields for report
         HashMap<String, Object> parameters = new HashMap<String, Object>();
 
-        ByteArrayInputStream bis = new ByteArrayInputStream(user.getImage1());
+        ByteArrayInputStream bis = new ByteArrayInputStream(annonce.getPhoto1());
         BufferedImage read = null;
         try {
             read = ImageIO.read(bis);
@@ -37,7 +39,7 @@ public class PrintReport {
             e.printStackTrace();
         }
 
-        parameters.put("username", user.getFirstName());
+        parameters.put("username", annonce.getTitre());
         parameters.put("photo1", read);
 
 

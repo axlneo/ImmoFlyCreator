@@ -1,50 +1,49 @@
 package com.codetreatise.controller;
 
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.URL;
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.codetreatise.bean.Agent;
 import com.codetreatise.bean.Annonce;
+import com.codetreatise.config.StageManager;
+import com.codetreatise.service.AgentService;
+import com.codetreatise.service.AnnonceService;
 import com.codetreatise.service.PrintReport;
+import com.codetreatise.view.FxmlView;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 
-import com.codetreatise.bean.User;
-import com.codetreatise.config.StageManager;
-import com.codetreatise.service.UserService;
-import com.codetreatise.view.FxmlView;
-
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.util.Callback;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Ram Alapure
@@ -52,49 +51,28 @@ import javax.swing.*;
  */
 
 @Controller
-public class UserController implements Initializable{
+public class AnnonceController implements Initializable{
 
 	@FXML
     private Button btnLogout;
 	
 	@FXML
-    private Label userId;
+    private Label annonceId;
 	
 	@FXML
-    private TextField firstName;
+    private TextField annonceTitre;
 
-    @FXML
-    private TextField lastName;
-
-    @FXML
-    private DatePicker dob;
-    
-    @FXML
-    private RadioButton rbMale;
-
-    @FXML
-    private ToggleGroup gender;
-
-    @FXML
-    private RadioButton rbFemale;
-    
-    @FXML
-    private ComboBox<String> cbRole;
-
-    @FXML
-    private TextField email;
-
-    @FXML
-    private PasswordField password;
+	@FXML
+	private TextArea annonceDesc;
     
     @FXML
     private Button reset;
 	
 	@FXML
-    private Button saveUser;
+    private Button saveAnnonce;
 
 	@FXML
-	private FileChooser fileChooser;
+	private ImageView imageCover;
 
     @FXML
     private ImageView imageView1;
@@ -108,38 +86,42 @@ public class UserController implements Initializable{
 	@FXML
 	private ImageView imageView4;
 
-
-	private File file1, file2, file3, file4 = null;
+	@FXML
+	private Label coverName;
 
 	@FXML
-	private TableView<Agent> userTable;
+	private Label photo1Name;
 
 	@FXML
-	private TableColumn<Agent, Long> colUserId;
+	private Label photo2Name;
 
 	@FXML
-	private TableColumn<Agent, String> colFirstName;
+	private Label photo3Name;
 
 	@FXML
-	private TableColumn<Agent, String> colLastName;
+	private Label photo4Name;
+
+
+	private File file1, file2, file3, file4, cover = null;
 
 	@FXML
-	private TableColumn<Agent, LocalDate> colDOB;
+	private TableView<Annonce> annonceTable;
 
 	@FXML
-	private TableColumn<Agent, String> colGender;
+	private TableColumn<Annonce, Long> colAnnonceId;
+
+	@FXML
+	private TableColumn<Annonce, String> colAnnonceTitre;
+
+	@FXML
+	private TableColumn<Annonce, String> colAnnonceDesc;
+
 	
 	@FXML
-    private TableColumn<Agent, String> colRole;
-
-	@FXML
-	private TableColumn<Agent, String> colEmail;
+    private TableColumn<Annonce, Boolean> colEdit;
 	
 	@FXML
-    private TableColumn<Agent, Boolean> colEdit;
-	
-	@FXML
-    private MenuItem deleteUsers;
+    private MenuItem deleteAnnonces;
 
 	@FXML
 	private Button printButton;
@@ -149,12 +131,16 @@ public class UserController implements Initializable{
     private StageManager stageManager;
 	
 	@Autowired
-	private UserService userService;
-	
-	private ObservableList<Agent> userList = FXCollections.observableArrayList();
-	private ObservableList<String> roles = FXCollections.observableArrayList("Admin", "User");
+	private AgentService agentService;
 
-	private BooleanProperty isUserSelected = new SimpleBooleanProperty(false);
+    @Autowired
+    private AnnonceService annonceService;
+
+	private  Agent authenticateAgent;
+	
+	private ObservableList<Annonce> annonceList = FXCollections.observableArrayList();
+
+	private BooleanProperty isAnnonceSelected = new SimpleBooleanProperty(false);
 	private Annonce selectedAnnonce;
 
 	@FXML
@@ -175,16 +161,39 @@ public class UserController implements Initializable{
     	clearFields();
     }
 
+	public Agent getAuthenticateAgent() {
+		return authenticateAgent;
+	}
 
+	public void setAuthenticateAgent(Agent authenticateAgent) {
+		this.authenticateAgent = authenticateAgent;
+	}
+
+	@FXML
+	private void chooseCover(ActionEvent event) {
+		FileChooser fc = new FileChooser();
+		fc.setTitle("Choisissez les photos");
+		fc.getExtensionFilters().addAll(
+				new FileChooser.ExtensionFilter("Images files(*.jpg,*.png)","*.jpg", "*.png"),
+				new FileChooser.ExtensionFilter("All Files", "*.*"));
+		cover = stageManager.openChooseCoverDialog(fc);
+		if(null != cover){
+			Image image1 = new Image(cover.toURI().toString());
+
+			imageCover.setImage(image1);
+			coverName.setText(cover.getName());
+
+		};
+	}
 
 	@FXML
 	private void chooseFile(ActionEvent event) {
 		FileChooser fc = new FileChooser();
-		fc.setTitle("Get Text");
+		fc.setTitle("Choisissez les photos");
 		fc.getExtensionFilters().addAll(
 				new FileChooser.ExtensionFilter("Images files(*.jpg,*.png)","*.jpg", "*.png"),
 				new FileChooser.ExtensionFilter("All Files", "*.*"));
-		List<File> phil = stageManager.openChooseFileDialog(fc); //TODO verify
+		List<File> phil = stageManager.openChooseFileDialog(fc);
 		if(null != phil){ //not cancel
 
 			switch(phil.size()){
@@ -196,6 +205,7 @@ public class UserController implements Initializable{
 						Image image1 = new Image(file1.toURI().toString());
 
 						imageView1.setImage(image1);
+						photo1Name.setText(file1.getPath());
 
 					};
 					break;
@@ -206,11 +216,13 @@ public class UserController implements Initializable{
 						Image image1 = new Image(file1.toURI().toString());
 
 						imageView1.setImage(image1);
+						photo1Name.setText(file1.getPath());
 					};
 					if(null != file2){
 						Image image2 = new Image(file2.toURI().toString());
 
 						imageView2.setImage(image2);
+						photo2Name.setText(file2.getPath());
                     };
 					break;
 
@@ -221,16 +233,21 @@ public class UserController implements Initializable{
 						Image image1 = new Image(file1.toURI().toString());
 
 						imageView1.setImage(image1);
+						photo1Name.setText(file1.getPath());
 					};
 					if(null != file2){
 						Image image2 = new Image(file2.toURI().toString());
 
 						imageView2.setImage(image2);
+						photo2Name.setText(file2.getPath());
 					};
 					if(null != file3){
 						Image image3 = new Image(file3.toURI().toString());
 
 						imageView3.setImage(image3);
+
+						photo3Name.setText(file3.getPath());
+
 					};
 					break;
 
@@ -242,21 +259,25 @@ public class UserController implements Initializable{
 						Image image1 = new Image(file1.toURI().toString());
 
 						imageView1.setImage(image1);
+						photo1Name.setText(file1.getPath());
 					};
 					if(null != file2){
 						Image image2 = new Image(file2.toURI().toString());
 
 						imageView2.setImage(image2);
+						photo2Name.setText(file2.getPath());
 					};
 					if(null != file3){
 						Image image3 = new Image(file3.toURI().toString());
 
 						imageView3.setImage(image3);
+						photo3Name.setText(file3.getPath());
 					};
 					if(null != file4){
 						Image image4 = new Image(file4.toURI().toString());
 
 						imageView4.setImage(image4);
+						photo4Name.setText(file4.getPath());
 					};
 					break;
 			}
@@ -266,49 +287,44 @@ public class UserController implements Initializable{
 	}
 
     @FXML
-    private void saveUser(ActionEvent event){
+    private void saveAnnonce(ActionEvent event){
     	
-    	if(validate("First Name", getFirstName(), "[a-zA-Z]+") &&
-    	   validate("Last Name", getLastName(), "[a-zA-Z]+") &&
-    	   emptyValidation("DOB", dob.getEditor().getText().isEmpty()) && 
-    	   emptyValidation("Role", getRole() == null) ){
+    	if(emptyValidation("Titre", getAnnonceTitre().isEmpty()) &&
+    	   emptyValidation("Description", getAnnonceDesc().isEmpty()) ){
     		
-    		if(userId.getText() == null || userId.getText() == ""){
-    			if(validate("Email", getEmail(), "[a-zA-Z0-9][a-zA-Z0-9._]*@[a-zA-Z0-9]+([.][a-zA-Z]+)+") &&
-    				emptyValidation("Password", getPassword().isEmpty())){
+    		if(annonceId.getText() == null || annonceId.getText() == ""){
+
     				
-    				Agent user = new Agent();
-        			user.setFirstName(getFirstName());
-        			user.setLastName(getLastName());
-        			user.setDob(getDob());
-        			user.setGender(getGender());
-        			user.setRole(getRole());
-        			user.setEmail(getEmail());
-        			user.setPassword(getPassword());
+				Annonce annonce = new Annonce();
+				annonce.setAgent(this.getAuthenticateAgent());
+				annonce.setDescription(this.getAnnonceDesc());
+				annonce.setTitre(this.getAnnonceTitre());
 
-        			//saveUserImages(user);
+				saveAnnonceImages(annonce);
 
-        			Agent newUser = userService.save(user);
-        			
-        			saveAlert(newUser);
-    			}
+				Annonce createAnnonce = annonceService.save(annonce);
+
+				this.setAuthenticateAgent(agentService.find(this.getAuthenticateAgent().getAgentId())); //TODO ne remet pas a jour avec la nouvele annonce
+
+				saveAlert(createAnnonce);
+
     			
     		}else{
-    			Agent user = userService.find(Long.parseLong(userId.getText()));
-    			user.setFirstName(getFirstName());
-    			user.setLastName(getLastName());
-    			user.setDob(getDob());
-    			user.setGender(getGender());
-    			user.setRole(getRole());
+    			Annonce annonce = this.getAuthenticateAgent().getAnnonceById(Long.parseLong(annonceId.getText()));
 
-				//saveUserImages(user);
+				annonce.setDescription(this.getAnnonceDesc());
+				annonce.setTitre(this.getAnnonceTitre());
 
-    			Agent updatedUser =  userService.update(user);
-    			updateAlert(updatedUser);
+				saveAnnonceImages(annonce);
+                Annonce updateAnnonce = annonceService.update(annonce);
+
+				this.setAuthenticateAgent(agentService.find(this.getAuthenticateAgent().getAgentId())); //TODO ne remet pas a jour avec la nouvele annonce
+
+    			updateAlert(updateAnnonce);
     		}
     		
     		clearFields();
-    		loadUserDetails();
+    		loadAnnonces();
     	}
     	
     	
@@ -380,12 +396,27 @@ public class UserController implements Initializable{
 			annonce.setPhoto4(bFile4);
 
 		}
+		if(null != cover){
 
+			byte[] bCover = new byte[(int) cover.length()];
+
+			try {
+				FileInputStream fileInputStream = new FileInputStream(cover);
+				fileInputStream.read(bCover);
+				fileInputStream.close();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			annonce.setCover(bCover);
+
+		}
 	}
 
     @FXML
-    private void deleteUsers(ActionEvent event){
-    	List<Agent> users = userTable.getSelectionModel().getSelectedItems();
+    private void deleteAnnonces(ActionEvent event){
+    	List<Annonce> annonces = annonceTable.getSelectionModel().getSelectedItems();
     	
     	Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Confirmation Dialog");
@@ -393,100 +424,76 @@ public class UserController implements Initializable{
 		alert.setContentText("Are you sure you want to delete selected?");
 		Optional<ButtonType> action = alert.showAndWait();
 		
-		if(action.get() == ButtonType.OK) userService.deleteInBatch(users);
+		if(action.get() == ButtonType.OK) {
+			annonceService.deleteInBatch(annonces);
+			this.getAuthenticateAgent().getAnnonceList().removeAll(annonces);
+		}
     	
-    	loadUserDetails();
+    	loadAnnonces();
     }
     
    	private void clearFields() {
-		userId.setText(null);
-		firstName.clear();
-		lastName.clear();
-		dob.getEditor().clear();
-		rbMale.setSelected(true);
-		rbFemale.setSelected(false);
-		cbRole.getSelectionModel().clearSelection();
-		email.clear();
-		password.clear();
+		annonceId.setText(null);
+		annonceTitre.clear();
+		annonceDesc.clear();
 		imageView1.setImage(null);
 		imageView2.setImage(null);
 		imageView3.setImage(null);
 		imageView4.setImage(null);
+		imageCover.setImage(null);
 		file1 = null;
 		file2 = null;
 		file3 = null;
 		file4 = null;
+		cover = null;
 
-		isUserSelected.set(false);
+		isAnnonceSelected.set(false);
 		selectedAnnonce = null;
 	}
 	
-	private void saveAlert(Agent user){
+	private void saveAlert(Annonce annonce){
 		
 		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("User saved successfully.");
+		alert.setTitle("Annonce saved successfully.");
 		alert.setHeaderText(null);
-		alert.setContentText("The user "+user.getFirstName()+" "+user.getLastName() +" has been created and \n"+getGenderTitle(user.getGender())+" id is "+ user.getAgentId() +".");
+		alert.setContentText("L annonce "+annonce.getTitre() +" a été crée et \nson id est "+ annonce.getAnnonceId() +".");
 		alert.showAndWait();
 	}
 	
-	private void updateAlert(Agent user){
+	private void updateAlert(Annonce annonce){
 		
 		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("*" + "ser updated successfully.");
+		alert.setTitle("Annonce updated successfully.");
 		alert.setHeaderText(null);
-		alert.setContentText("The user "+user.getFirstName()+" "+user.getLastName() +" has been updated.");
+		alert.setContentText("L annonce "+annonce.getTitre()+" - ID: "+annonce.getAnnonceId() +" a été maj.");
 
 		alert.showAndWait();
 
 	}
 
-	private String getGenderTitle(String gender){
-		return (gender.equals("Male")) ? "his" : "her";
+
+	public String getAnnonceTitre() {
+		return annonceTitre.getText();
 	}
 
-	public String getFirstName() {
-		return firstName.getText();
+	public String getAnnonceDesc() {
+		return annonceDesc.getText();
 	}
 
-	public String getLastName() {
-		return lastName.getText();
-	}
-
-	public LocalDate getDob() {
-		return dob.getValue();
-	}
-
-	public String getGender(){
-		return rbMale.isSelected() ? "Male" : "Female";
-	}
-	
-	public String getRole() {
-		return cbRole.getSelectionModel().getSelectedItem();
-	}
-
-	public String getEmail() {
-		return email.getText();
-	}
-
-	public String getPassword() {
-		return password.getText();
-	}
-  
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
     	initPrintButton();
 		
-		cbRole.setItems(roles);
+		this.setAuthenticateAgent(agentService.getAuthenticateAgent());
 		
-		userTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		annonceTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		
 		setColumnProperties();
 		
 		// Add all users into table
-		loadUserDetails();
+		loadAnnonces();
 	}
 	
 	private void initPrintButton(){
@@ -496,9 +503,7 @@ public class UserController implements Initializable{
 		imageView.setFitHeight(100.0);
 		imageView.setFitWidth(100.0);
 		printButton.setGraphic(imageView);
-
-		printButton.visibleProperty().bind(isUserSelected);
-
+		printButton.visibleProperty().bind(isAnnonceSelected);
 		printButton.setOnAction(e -> {
 
 				// --- Show Jasper Report on click-----
@@ -554,23 +559,19 @@ public class UserController implements Initializable{
 		     }
 		 }));*/
 		
-		colUserId.setCellValueFactory(new PropertyValueFactory<>("id"));
-		colFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-		colLastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
-		colDOB.setCellValueFactory(new PropertyValueFactory<>("dob"));
-		colGender.setCellValueFactory(new PropertyValueFactory<>("gender"));
-		colRole.setCellValueFactory(new PropertyValueFactory<>("role"));
-		colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+		colAnnonceId.setCellValueFactory(new PropertyValueFactory<>("id"));
+		colAnnonceTitre.setCellValueFactory(new PropertyValueFactory<>("titre"));
+		colAnnonceDesc.setCellValueFactory(new PropertyValueFactory<>("description"));
 		colEdit.setCellFactory(cellFactory);
 	}
 	
-	Callback<TableColumn<Agent, Boolean>, TableCell<Agent, Boolean>> cellFactory =
-			new Callback<TableColumn<Agent, Boolean>, TableCell<Agent, Boolean>>()
+	Callback<TableColumn<Annonce, Boolean>, TableCell<Annonce, Boolean>> cellFactory =
+			new Callback<TableColumn<Annonce, Boolean>, TableCell<Annonce, Boolean>>()
 	{
 		@Override
-		public TableCell<Agent, Boolean> call( final TableColumn<Agent, Boolean> param)
+		public TableCell<Annonce, Boolean> call( final TableColumn<Annonce, Boolean> param)
 		{
-			final TableCell<Agent, Boolean> cell = new TableCell<Agent, Boolean>()
+			final TableCell<Annonce, Boolean> cell = new TableCell<Annonce, Boolean>()
 			{
 				Image imgEdit = new Image(getClass().getResourceAsStream("/images/edit.png"));
 				final Button btnEdit = new Button();
@@ -586,8 +587,8 @@ public class UserController implements Initializable{
 					}
 					else{
 						btnEdit.setOnAction(e ->{
-							Agent user = getTableView().getItems().get(getIndex());
-							updateUser(user);
+							Annonce annonce = getTableView().getItems().get(getIndex());
+							updateUser(annonce);
 						});
 
 						btnEdit.setStyle("-fx-background-color: transparent;");
@@ -604,57 +605,57 @@ public class UserController implements Initializable{
 					}
 				}
 
-				private void updateUser(Agent user) {
-					userId.setText(Long.toString(user.getAgentId()));
-					firstName.setText(user.getFirstName());
-					lastName.setText(user.getLastName());
-					dob.setValue(user.getDob());
-					if(user.getGender().equals("Male")) rbMale.setSelected(true);
-					else rbFemale.setSelected(true);
-					cbRole.getSelectionModel().select(user.getRole());
+				private void updateUser(Annonce annonce) {
+					annonceId.setText(Long.toString(annonce.getAnnonceId()));
+					annonceDesc.setText(annonce.getDescription());
+					annonceTitre.setText(annonce.getTitre());
 
-//					imageView1.setImage(convertToJavaFXImage(user.getImage1(),200,150));
-//					imageView2.setImage(convertToJavaFXImage(user.getImage2(),200,150));
-//					imageView3.setImage(convertToJavaFXImage(user.getImage3(),200,150));
-//					imageView4.setImage(convertToJavaFXImage(user.getImage4(),200,150));
 
-					isUserSelected.set(true);
-					//selectedAnnonce = user;
+					imageView1.setImage(convertToJavaFXImage(annonce.getPhoto1(),260,210));
+					imageView2.setImage(convertToJavaFXImage(annonce.getPhoto2(),260,210));
+					imageView3.setImage(convertToJavaFXImage(annonce.getPhoto3(),260,210));
+					imageView4.setImage(convertToJavaFXImage(annonce.getPhoto4(),260,210));
+
+					imageCover.setImage(convertToJavaFXImage(annonce.getCover(),360,245));
+
+					isAnnonceSelected.set(true);
+					selectedAnnonce = annonce;
 				}
 			};
 			return cell;
 		}
 	};
 
+	private static Image convertToJavaFXImage(byte[] raw, final int width, final int height) {
+		if(null != raw){
+
+			WritableImage image = new WritableImage(width, height);
+			try {
+				ByteArrayInputStream bis = new ByteArrayInputStream(raw);
+				BufferedImage read = ImageIO.read(bis);
+				image = SwingFXUtils.toFXImage(read, null);
+			} catch (IOException ex) {
+				//Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+				ex.printStackTrace();
+			}
+			return image;
+		} else {
+			return null;
+		}
+	}
 
 	/*
 	 *  Add All users to observable list and update table
 	 */
-	private void loadUserDetails(){
-		userList.clear();
-		userList.addAll(userService.findAll());
+	private void loadAnnonces(){
 
-		userTable.setItems(userList);
+		annonceList.clear();
+		annonceList.addAll(authenticateAgent.getAnnonceList());
+
+		annonceTable.setItems(annonceList);
 	}
 	
-	/*
-	 * Validations
-	 */
-	private boolean validate(String field, String value, String pattern){
-		if(!value.isEmpty()){
-			Pattern p = Pattern.compile(pattern);
-	        Matcher m = p.matcher(value);
-	        if(m.find() && m.group().equals(value)){
-	            return true;
-	        }else{
-	        	validationAlert(field, false);            
-	            return false;            
-	        }
-		}else{
-			validationAlert(field, true);            
-            return false;
-		}        
-    }
+
 	
 	private boolean emptyValidation(String field, boolean empty){
         if(!empty){
@@ -669,11 +670,10 @@ public class UserController implements Initializable{
 		Alert alert = new Alert(AlertType.WARNING);
         alert.setTitle("Validation Error");
         alert.setHeaderText(null);
-        if(field.equals("Role")) alert.setContentText("Please Select "+ field);
-        else{
-        	if(empty) alert.setContentText("Please Enter "+ field);
-        	else alert.setContentText("Please Enter Valid "+ field);
-        }
+
+		if(empty) alert.setContentText("Please Enter "+ field);
+		else alert.setContentText("Please Enter Valid "+ field);
+
         alert.showAndWait();
 	}
 }

@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 
 import com.codetreatise.config.StageManager;
-import com.codetreatise.service.UserService;
+import com.codetreatise.service.AgentService;
 import com.codetreatise.view.FxmlView;
 
 import javafx.event.ActionEvent;
@@ -42,7 +42,7 @@ public class LoginController implements Initializable{
     private Label lblLogin;
     
     @Autowired
-    private UserService userService;
+    private AgentService agentService;
     
     @Lazy
     @Autowired
@@ -50,9 +50,9 @@ public class LoginController implements Initializable{
         
 	@FXML
     private void login(ActionEvent event) throws IOException{
-    	if(userService.authenticate(getUsername(), getPassword())){
+    	if(agentService.authenticate(getUsername(), getPassword())){
     		    		
-    		stageManager.switchScene(FxmlView.USER);
+    		stageManager.switchScene(FxmlView.ANNONCE);
     		
     	}else{
     		lblLogin.setText("Login Failed.");

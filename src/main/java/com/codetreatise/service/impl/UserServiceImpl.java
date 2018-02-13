@@ -2,31 +2,49 @@ package com.codetreatise.service.impl;
 
 import java.util.List;
 
+import com.codetreatise.bean.Agent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.codetreatise.bean.User;
 import com.codetreatise.repository.UserRepository;
 import com.codetreatise.service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
-	
+
+	private Agent authenticateAgent;
+
+	public Agent getAuthenticateAgent() {
+		return authenticateAgent;
+	}
+
+	public void setAuthenticateAgent(Agent authenticateAgent) {
+		this.authenticateAgent = authenticateAgent;
+	}
+
+	public UserRepository getUserRepository() {
+		return userRepository;
+	}
+
+	public void setUserRepository(UserRepository userRepository) {
+		this.userRepository = userRepository;
+	}
+
 	@Autowired
 	private UserRepository userRepository;
 	
 	@Override
-	public User save(User entity) {
+	public Agent save(Agent entity) {
 		return userRepository.save(entity);
 	}
 
 	@Override
-	public User update(User entity) {
+	public Agent update(Agent entity) {
 		return userRepository.save(entity);
 	}
 
 	@Override
-	public void delete(User entity) {
+	public void delete(Agent entity) {
 		userRepository.delete(entity);
 	}
 
@@ -36,33 +54,38 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User find(Long id) {
+	public Agent find(Long id) {
 		return userRepository.findOne(id);
 	}
 
 	@Override
-	public List<User> findAll() {
+	public List<Agent> findAll() {
 		return userRepository.findAll();
 	}
 
 	@Override
 	public boolean authenticate(String username, String password){
-		User user = this.findByEmail(username);
+		Agent user = this.findByEmail(username);
 		if(user == null){
 			return false;
 		}else{
-			if(password.equals(user.getPassword())) return true;
-			else return false;
+			if(password.equals(user.getPassword())){
+				this.setAuthenticateAgent(user);
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
 	}
 
 	@Override
-	public User findByEmail(String email) {
+	public Agent findByEmail(String email) {
 		return userRepository.findByEmail(email);
 	}
 
 	@Override
-	public void deleteInBatch(List<User> users) {
+	public void deleteInBatch(List<Agent> users) {
 		userRepository.deleteInBatch(users);
 	}
 	

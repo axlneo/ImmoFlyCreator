@@ -30,7 +30,10 @@ public class StageManager {
         this.primaryStage = stage;
     }
 
-    public List<File> openChooseDialog(FileChooser fc){
+    public File openChooseCoverDialog(FileChooser fc){
+        return fc.showOpenDialog(primaryStage);
+    }
+    public List<File> openChooseFileDialog(FileChooser fc){
         return fc.showOpenMultipleDialog(primaryStage);
     }
     public void switchScene(final FxmlView view) {
