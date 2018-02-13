@@ -6,6 +6,7 @@ import com.codetreatise.config.StageManager;
 import com.codetreatise.service.AgentService;
 import com.codetreatise.service.AnnonceService;
 import com.codetreatise.service.PrintReport;
+import com.codetreatise.utils.ImageUtils;
 import com.codetreatise.view.FxmlView;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -611,12 +612,12 @@ public class AnnonceController implements Initializable{
 					annonceTitre.setText(annonce.getTitre());
 
 
-					imageView1.setImage(convertToJavaFXImage(annonce.getPhoto1(),260,210));
-					imageView2.setImage(convertToJavaFXImage(annonce.getPhoto2(),260,210));
-					imageView3.setImage(convertToJavaFXImage(annonce.getPhoto3(),260,210));
-					imageView4.setImage(convertToJavaFXImage(annonce.getPhoto4(),260,210));
+					imageView1.setImage(ImageUtils.convertToJavaFXImage(annonce.getPhoto1(),260,210));
+					imageView2.setImage(ImageUtils.convertToJavaFXImage(annonce.getPhoto2(),260,210));
+					imageView3.setImage(ImageUtils.convertToJavaFXImage(annonce.getPhoto3(),260,210));
+					imageView4.setImage(ImageUtils.convertToJavaFXImage(annonce.getPhoto4(),260,210));
 
-					imageCover.setImage(convertToJavaFXImage(annonce.getCover(),360,245));
+					imageCover.setImage(ImageUtils.convertToJavaFXImage(annonce.getCover(),360,245));
 
 					isAnnonceSelected.set(true);
 					selectedAnnonce = annonce;
@@ -626,23 +627,7 @@ public class AnnonceController implements Initializable{
 		}
 	};
 
-	private static Image convertToJavaFXImage(byte[] raw, final int width, final int height) {
-		if(null != raw){
 
-			WritableImage image = new WritableImage(width, height);
-			try {
-				ByteArrayInputStream bis = new ByteArrayInputStream(raw);
-				BufferedImage read = ImageIO.read(bis);
-				image = SwingFXUtils.toFXImage(read, null);
-			} catch (IOException ex) {
-				//Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
-				ex.printStackTrace();
-			}
-			return image;
-		} else {
-			return null;
-		}
-	}
 
 	/*
 	 *  Add All users to observable list and update table
@@ -676,4 +661,10 @@ public class AnnonceController implements Initializable{
 
         alert.showAndWait();
 	}
+
+    @FXML
+    private void toUserView(ActionEvent event) {
+        stageManager.switchScene(FxmlView.USER);
+    }
+
 }

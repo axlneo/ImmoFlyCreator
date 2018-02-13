@@ -29,11 +29,22 @@ public class Agent {
 
     private String password;
 
+    @Column(name = "logo")
+    private byte[] logo;
+
     @OneToOne(fetch = FetchType.EAGER, mappedBy = "agent", cascade = CascadeType.ALL) //TODO essayer de passer en lazy
     private Coordonnees coordonnees;
 
     @OneToMany(fetch = FetchType.EAGER,mappedBy="agent")//TODO essayer de passer en lazy
     private Set<Annonce> annonceList;
+
+    public byte[] getLogo() {
+        return logo;
+    }
+
+    public void setLogo(byte[] logo) {
+        this.logo = logo;
+    }
 
     public long getAgentId() {
         return agentId;

@@ -2,7 +2,6 @@ package com.codetreatise.service;
 
 import com.codetreatise.bean.Agent;
 import com.codetreatise.bean.Annonce;
-import com.codetreatise.bean.User;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.swing.JRViewer;
@@ -68,6 +67,8 @@ public class PrintReport {
         this.setSize(700, 500);
         this.setVisible(true);*/
 
-
+    public void showReport(Agent agent){
+        //TODO everything
+    }
 
 }

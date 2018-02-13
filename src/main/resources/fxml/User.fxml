@@ -22,7 +22,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="600.0" prefWidth="1000.0" stylesheets="@../styles/Styles.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.codetreatise.controller.UserController">
+<BorderPane prefHeight="600.0" prefWidth="1000.0" stylesheets="@../styles/Styles.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.codetreatise.controller.AgentController">
    <top>
       <MenuBar BorderPane.alignment="TOP_LEFT">
         <menus>
@@ -116,7 +116,7 @@
                   <Insets left="25.0" right="25.0" />
                </VBox.margin>
             </PasswordField>
-             <Button fx:id="choosefile" mnemonicParsing="false" onAction="#chooseFile" prefHeight="30.0" prefWidth="129.0" style="-fx-background-color: white;" text="Choose image">
+             <Button fx:id="choosefile" mnemonicParsing="false" onAction="#chooseFile" prefHeight="30.0" prefWidth="129.0" style="-fx-background-color: white;" text="Download Logo">
                  <effect>
                      <DropShadow blurType="ONE_PASS_BOX" color="#1965d0" />
                  </effect>
@@ -146,7 +146,7 @@
             </HBox>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Button fx:id="printButton" onAction="#printPdf" mnemonicParsing="false" text="Print doc"/>
+                  <Button fx:id="printButton" mnemonicParsing="false" onAction="#printPdf" text="Print doc" />
                </children>
             </HBox>
          </children>
@@ -202,12 +202,9 @@
                </contextMenu>
             </TableView>
 
-                              <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0">
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <ImageView fx:id="imageView1" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                  <ImageView fx:id="imageView2" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                  <ImageView fx:id="imageView3" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                  <ImageView fx:id="imageView4" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="imageLogo" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
                </children>
 
                               </HBox>
