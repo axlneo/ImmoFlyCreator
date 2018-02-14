@@ -1,0 +1,6 @@
+---
+applications:
+- name: ImmoFlyCreator
+  memory: 1G
+  instances: 1
+  path: /home/axel/Wksp/javaFx/ImmoFlyCreator/target/JavaFXSpringBootApp-1.0.jar
