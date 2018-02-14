@@ -243,7 +243,7 @@ public class AgentController implements Initializable{
                     coord.setCodePostal(getCoordCodePostal());
                     coord.setEmail(getCoordEmail());
                     coord.setNom(getCoordName());
-                    coord.setNomRue(getCoordNumRue());
+                    coord.setNumRue(getCoordNumRue());
                     coord.setPhone(getCoordPhone());
                     coord.setRue(getCoordRue());
                     coord.setUrl(getCoordUrl());
@@ -273,7 +273,7 @@ public class AgentController implements Initializable{
                 coord.setCodePostal(getCoordCodePostal());
                 coord.setEmail(getCoordEmail());
                 coord.setNom(getCoordName());
-                coord.setNomRue(getCoordNumRue());
+                coord.setNumRue(getCoordNumRue());
                 coord.setPhone(getCoordPhone());
                 coord.setRue(getCoordRue());
                 coord.setUrl(getCoordUrl());
@@ -579,7 +579,7 @@ public class AgentController implements Initializable{
                                 coordCodePostal.setText(user.getCoordonnees().getCodePostal());
                                 coordEmail.setText(user.getCoordonnees().getEmail());
                                 coordName.setText(user.getCoordonnees().getNom());
-                                coordNumRue.setText(user.getCoordonnees().getNomRue());
+                                coordNumRue.setText(user.getCoordonnees().getNumRue());
                                 coordPhone.setText(user.getCoordonnees().getPhone());
                                 coordRue.setText(user.getCoordonnees().getRue());
                                 coordUrl.setText(user.getCoordonnees().getUrl());

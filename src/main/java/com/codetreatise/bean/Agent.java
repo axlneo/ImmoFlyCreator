@@ -139,4 +139,9 @@ public class Agent {
         }
         return resultat;
     }
+
+    @Override
+    public String toString(){
+        return this.getFirstName()+" "+this.getLastName();
+    }
 }

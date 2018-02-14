@@ -64,6 +64,9 @@ public class AnnonceController implements Initializable{
     private TextField annonceTitre;
 
 	@FXML
+	private TextField annoncePrix;
+
+	@FXML
 	private TextArea annonceDesc;
     
     @FXML
@@ -106,6 +109,9 @@ public class AnnonceController implements Initializable{
 	private File file1, file2, file3, file4, cover = null;
 
 	@FXML
+	private Label connectedAgentName;
+
+	@FXML
 	private TableView<Annonce> annonceTable;
 
 	@FXML
@@ -116,6 +122,9 @@ public class AnnonceController implements Initializable{
 
 	@FXML
 	private TableColumn<Annonce, String> colAnnonceDesc;
+
+	@FXML
+	private TableColumn<Annonce, String> colAnnoncePrix;
 
 	
 	@FXML
@@ -300,6 +309,7 @@ public class AnnonceController implements Initializable{
 				annonce.setAgent(this.getAuthenticateAgent());
 				annonce.setDescription(this.getAnnonceDesc());
 				annonce.setTitre(this.getAnnonceTitre());
+				annonce.setPrix(this.getAnnoncePrix());
 
 				saveAnnonceImages(annonce);
 
@@ -315,6 +325,7 @@ public class AnnonceController implements Initializable{
 
 				annonce.setDescription(this.getAnnonceDesc());
 				annonce.setTitre(this.getAnnonceTitre());
+				annonce.setPrix(this.getAnnoncePrix());
 
 				saveAnnonceImages(annonce);
                 Annonce updateAnnonce = annonceService.update(annonce);
@@ -436,6 +447,7 @@ public class AnnonceController implements Initializable{
    	private void clearFields() {
 		annonceId.setText(null);
 		annonceTitre.clear();
+		annoncePrix.clear();
 		annonceDesc.clear();
 		imageView1.setImage(null);
 		imageView2.setImage(null);
@@ -477,6 +489,10 @@ public class AnnonceController implements Initializable{
 		return annonceTitre.getText();
 	}
 
+	public String getAnnoncePrix() {
+		return annoncePrix.getText();
+	}
+
 	public String getAnnonceDesc() {
 		return annonceDesc.getText();
 	}
@@ -488,10 +504,12 @@ public class AnnonceController implements Initializable{
     	initPrintButton();
 		
 		this.setAuthenticateAgent(agentService.getAuthenticateAgent());
+		connectedAgentName.setText(this.getAuthenticateAgent().toString());
 		
 		annonceTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		
 		setColumnProperties();
+
 		
 		// Add all users into table
 		loadAnnonces();
@@ -514,6 +532,7 @@ public class AnnonceController implements Initializable{
 						System.out.println("now open dialog!");
 						try {
 							PrintReport viewReport = new PrintReport();
+							selectedAnnonce.setAgent(authenticateAgent);
 							viewReport.showReport(selectedAnnonce);
 						} catch (JRException e1) {
 							e1.printStackTrace();
@@ -560,8 +579,9 @@ public class AnnonceController implements Initializable{
 		     }
 		 }));*/
 		
-		colAnnonceId.setCellValueFactory(new PropertyValueFactory<>("id"));
+		colAnnonceId.setCellValueFactory(new PropertyValueFactory<>("annonceId"));
 		colAnnonceTitre.setCellValueFactory(new PropertyValueFactory<>("titre"));
+		colAnnoncePrix.setCellValueFactory(new PropertyValueFactory<>("prix"));
 		colAnnonceDesc.setCellValueFactory(new PropertyValueFactory<>("description"));
 		colEdit.setCellFactory(cellFactory);
 	}
@@ -589,7 +609,7 @@ public class AnnonceController implements Initializable{
 					else{
 						btnEdit.setOnAction(e ->{
 							Annonce annonce = getTableView().getItems().get(getIndex());
-							updateUser(annonce);
+							updateAnnonce(annonce);
 						});
 
 						btnEdit.setStyle("-fx-background-color: transparent;");
@@ -606,10 +626,11 @@ public class AnnonceController implements Initializable{
 					}
 				}
 
-				private void updateUser(Annonce annonce) {
+				private void updateAnnonce(Annonce annonce) {
 					annonceId.setText(Long.toString(annonce.getAnnonceId()));
 					annonceDesc.setText(annonce.getDescription());
 					annonceTitre.setText(annonce.getTitre());
+					annoncePrix.setText(annonce.getPrix());
 
 
 					imageView1.setImage(ImageUtils.convertToJavaFXImage(annonce.getPhoto1(),260,210));

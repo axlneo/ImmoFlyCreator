@@ -29,7 +29,7 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Admin">
             <items>
-              <MenuItem mnemonicParsing="false" text="User Admin" onAction="#toUserView" />
+              <MenuItem mnemonicParsing="false" onAction="#toUserView" text="User Admin" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
@@ -73,6 +73,11 @@
                   <Insets left="25.0" right="25.0" />
                </VBox.margin>
             </TextField>
+            <TextField fx:id="annoncePrix" layoutX="40.0" layoutY="130.0" prefHeight="30.0" prefWidth="246.0" promptText="Prix">
+               <VBox.margin>
+                  <Insets left="25.0" right="25.0" />
+               </VBox.margin>
+            </TextField>
             <Button fx:id="coverChoose" layoutX="15.0" layoutY="170.0" mnemonicParsing="false" onAction="#chooseCover" prefHeight="30.0" prefWidth="154.0" style="-fx-background-color: white;" text="Choisir couverture">
                <effect>
                   <DropShadow blurType="ONE_PASS_BOX" color="#1965d0" />
@@ -87,7 +92,7 @@
             <Label fx:id="photo1Name" layoutX="15.0" layoutY="276.0" />
             <Label fx:id="photo2Name" layoutX="15.0" layoutY="451.0" />
             <Label fx:id="photo3Name" layoutX="15.0" layoutY="477.0" />
-            <Label fx:id="photo4Name"/>
+            <Label fx:id="photo4Name" />
             <TextArea fx:id="annonceDesc" prefHeight="200.0" prefWidth="200.0" promptText="Description" />
             <HBox prefHeight="25.0" prefWidth="275.0" spacing="10.0">
                <children>
@@ -129,8 +134,9 @@
    <center>
       <VBox alignment="TOP_RIGHT" prefHeight="571.0" prefWidth="692.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox alignment="TOP_RIGHT" prefHeight="41.0" prefWidth="640.0">
+            <HBox alignment="TOP_RIGHT" prefHeight="41.0" prefWidth="640.0" spacing="20.0">
                <children>
+                  <Label fx:id="connectedAgentName" />
                   <Button fx:id="btnLogout" mnemonicParsing="false" onAction="#logout" prefHeight="22.0" prefWidth="70.0" styleClass="background" text="Logout" textFill="#fff9f9" textOverrun="CLIP">
                      <font>
                         <Font size="14.0" />
@@ -143,11 +149,18 @@
                      </effect>
                   </Button>
                </children>
+               <padding>
+                  <Insets left="5.0" right="5.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
             </HBox>
             <TableView fx:id="annonceTable" prefHeight="300.0" prefWidth="679.0" tableMenuButtonVisible="true">
               <columns>
                 <TableColumn fx:id="colAnnonceId" maxWidth="700.0" prefWidth="20.0" text="ID" />
                 <TableColumn fx:id="colAnnonceTitre" maxWidth="4000.0" prefWidth="75.0" text="Titre" />
+                  <TableColumn fx:id="colAnnoncePrix" maxWidth="4000.0" prefWidth="75.0" text="Prix" />
                   <TableColumn fx:id="colAnnonceDesc" maxWidth="4000.0" prefWidth="75.0" text="Description" />
                   <TableColumn fx:id="colEdit" maxWidth="3500.0" prefWidth="75.0" text="Edit" />
               </columns>

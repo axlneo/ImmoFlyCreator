@@ -17,7 +17,7 @@ public class Coordonnees {
     private String nom;
 
     @Column(name = "num_rue")
-    private String nomRue;
+    private String numRue;
 
     @Column(name = "rue")
     private String rue;
@@ -54,12 +54,12 @@ public class Coordonnees {
         this.nom = nom;
     }
 
-    public String getNomRue() {
-        return nomRue;
+    public String getNumRue() {
+        return numRue;
     }
 
-    public void setNomRue(String nomRue) {
-        this.nomRue = nomRue;
+    public void setNumRue(String numRue) {
+        this.numRue = numRue;
     }
 
     public String getRue() {
@@ -108,6 +108,27 @@ public class Coordonnees {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getLine1forPdf(){
+        return this.getNom();
+    }
+    public String getLine2forPdf(){
+        StringBuffer result = new StringBuffer();
+        result = result.append(this.getNumRue()).append(", ").
+                append(this.getRue()).append(" - ").
+                append(this.getCodePostal()).append(" ").
+                append(this.getVille());
+        return result.toString();
+    }
+    public String getLine3forPdf(){
+        StringBuffer result = new StringBuffer();
+        result = result.append(this.getPhone()).append(" - ").
+                append(this.getEmail());
+        return result.toString();
+    }
+    public String getLine4forPdf(){
+        return this.getUrl();
     }
 
 

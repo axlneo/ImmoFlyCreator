@@ -14,6 +14,9 @@ public class Annonce {
     @Column(name = "titre")
     private String titre;
 
+    @Column(name = "prix")
+    private String prix;
+
     @Column(name = "description")
     private String description;
 
@@ -34,6 +37,14 @@ public class Annonce {
     @ManyToOne
     @JoinColumn(name="agent_id", nullable=false)
     private Agent agent;
+
+    public String getPrix() {
+        return prix;
+    }
+
+    public void setPrix(String prix) {
+        this.prix = prix;
+    }
 
     public long getAnnonceId() {
         return annonceId;
